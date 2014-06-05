@@ -18,15 +18,15 @@ public function withDistance($latitude, $longitude, $unit = <?php echo $defaultU
         $earthRadius = 6371;
     }
 
-    $sql = 'ABS(%s * ACOS(%s * COS(RADIANS(%s)) * COS(RADIANS(%s) - %s) + %s * SIN(RADIANS(%s))))';
+    $sql = '%s * ACOS( %s * SIN(RADIANS(%s)) + %s * COS(RADIANS(%s))*COS(RADIANS(%s)-%s) )';
     $preparedSql = sprintf($sql,
         $earthRadius,
+        sin(deg2rad($latitude)),
+        $this->getAliasedColName(<?php echo $latitudeColumnConstant ?>),
         cos(deg2rad($latitude)),
         $this->getAliasedColName(<?php echo $latitudeColumnConstant ?>),
         $this->getAliasedColName(<?php echo $longitudeColumnConstant ?>),
-        deg2rad($longitude),
-        sin(deg2rad($latitude)),
-        $this->getAliasedColName(<?php echo $latitudeColumnConstant ?>)
+        deg2rad($longitude)
     );
 
     return $this
